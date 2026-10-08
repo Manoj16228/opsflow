@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html.dark body {
+    @apply bg-[#070b14] text-slate-100 font-sans antialiased;
+    background-image: 
+      radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.05) 0%, transparent 40%);
+  }
+
+  html.light body {
+    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+    background-image: 
+      radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.03) 0%, transparent 40%);
+  }
+}
+
+/* Glassmorphism & Enterprise Panel Styles */
+html.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+html.light .glass-panel {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+}
+
+html.dark .glass-card {
+  background: rgba(11, 17, 32, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
+}
+
+html.light .glass-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
+}
+
+.glass-card-hover {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html.dark .glass-card-hover:hover {
+  transform: translateY(-2px);
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 12px 32px 0 rgba(0, 0, 0, 0.5), 0 0 20px -3px rgba(14, 165, 233, 0.15);
+}
+
+html.light .glass-card-hover:hover {
+  transform: translateY(-2px);
+  border-color: #38bdf8;
+  box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.08), 0 0 15px -3px rgba(14, 165, 233, 0.12);
+}
+
+/* Ambient Subtle Dot Grid */
+html.dark .bg-dot-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+html.light .bg-dot-grid {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Custom modern scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 9999px;
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8;
+}

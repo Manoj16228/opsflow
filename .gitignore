@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.log
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+*.tsbuildinfo
+
+# Python / Data Engineering
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Database / Storage
+*.sqlite
+*.sqlite3
+uploads/
+storage/
+
+# IDE / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker
+docker-data/
+postgres-data/
+redis-data/

@@ -1,0 +1,65 @@
+export enum UserRole {
+  ADMIN = 'ADMIN',
+  MANAGER = 'MANAGER',
+  EMPLOYEE = 'EMPLOYEE',
+  ANALYST = 'ANALYST',
+}
+
+export enum UserStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  SUSPENDED = 'SUSPENDED',
+}
+
+export enum EmployeeStatus {
+  ACTIVE = 'ACTIVE',
+  ON_LEAVE = 'ON_LEAVE',
+  TERMINATED = 'TERMINATED',
+}
+
+export enum Priority {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL',
+}
+
+export enum TaskStatus {
+  BACKLOG = 'BACKLOG',
+  ASSIGNED = 'ASSIGNED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  IN_REVIEW = 'IN_REVIEW',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+}
+
+export enum IncidentSeverity {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL',
+}
+
+export enum IncidentStatus {
+  OPEN = 'OPEN',
+  ASSIGNED = 'ASSIGNED',
+  INVESTIGATING = 'INVESTIGATING',
+  RESOLVED = 'RESOLVED',
+  CLOSED = 'CLOSED',
+}
+
+export enum NotificationType {
+  TASK_ASSIGNED = 'TASK_ASSIGNED',
+  TASK_STATUS_CHANGED = 'TASK_STATUS_CHANGED',
+  TASK_DUE_SOON = 'TASK_DUE_SOON',
+  TASK_OVERDUE = 'TASK_OVERDUE',
+  INCIDENT_ASSIGNED = 'INCIDENT_ASSIGNED',
+  INCIDENT_STATUS_CHANGED = 'INCIDENT_STATUS_CHANGED',
+  INCIDENT_SLA_BREACH = 'INCIDENT_SLA_BREACH',
+  SYSTEM_ALERT = 'SYSTEM_ALERT',
+}
+
+export enum AttachmentEntityType {
+  TASK = 'TASK',
+  INCIDENT = 'INCIDENT',
+}

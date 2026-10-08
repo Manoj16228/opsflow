@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OpsFlow Enterprise Platform Documentation</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    @page {
+      size: A4;
+      margin: 18mm 16mm 20mm 16mm;
+      @bottom-right {
+        content: counter(page);
+        font-family: 'Inter', sans-serif;
+        font-size: 8pt;
+        color: #64748b;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #1e293b;
+      background: #ffffff;
+      line-height: 1.55;
+      font-size: 9.5pt;
+    }
+
+    /* Print Break Utilities */
+    .page-break {
+      page-break-before: always;
+      break-before: page;
+    }
+    .avoid-break {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    /* Cover Page */
+    .cover {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 20px 20px 20px;
+    }
+    .cover-top {
+      border-top: 5px solid #2563eb;
+      padding-top: 30px;
+    }
+    .brand-tag {
+      display: inline-block;
+      font-size: 8.5pt;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #2563eb;
+      background: #eff6ff;
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      border: 1px solid #bfdbfe;
+    }
+    .cover-title {
+      font-size: 28pt;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    .cover-subtitle {
+      font-size: 13pt;
+      color: #475569;
+      font-weight: 400;
+      line-height: 1.4;
+      max-width: 600px;
+      margin-bottom: 30px;
+    }
+    .cover-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 40px;
+      padding: 20px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .meta-label {
+      font-size: 7.5pt;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .meta-val {
+      font-size: 9.5pt;
+      font-weight: 600;
+      color: #0f172a;
+    }
+    .cover-footer {
+      border-top: 1px solid #e2e8f0;
+      padding-top: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 8pt;
+      color: #64748b;
+    }
+
+    /* Content Typography */
+    h1 {
+      font-size: 16pt;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1.5px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    h2 {
+      font-size: 12pt;
+      font-weight: 700;
+      color: #1e293b;
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+    h3 {
+      font-size: 10pt;
+      font-weight: 600;
+      color: #334155;
+      margin-top: 12px;
+      margin-bottom: 6px;
+    }
+    p {
+      margin-bottom: 10px;
+      color: #334155;
+      text-align: justify;
+    }
+    ul, ol {
+      margin-left: 18px;
+      margin-bottom: 10px;
+      color: #334155;
+    }
+    li {
+      margin-bottom: 4px;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 16px 0;
+      font-size: 8.5pt;
+    }
+    th {
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      text-align: left;
+      padding: 8px 10px;
+      border: 1px solid #cbd5e1;
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    td {
+      padding: 7px 10px;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    /* Callouts / Highlight Boxes */
+    .callout {
+      padding: 12px 14px;
+      border-radius: 6px;
+      margin: 12px 0;
+      font-size: 9pt;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .callout-info {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      color: #1e40af;
+    }
+    .callout-success {
+      background: #f0fdf4;
+      border-left: 4px solid #10b981;
+      color: #166534;
+    }
+    .callout-warning {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      color: #92400e;
+    }
+
+    /* Code Blocks */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8pt;
+      background: #f1f5f9;
+      padding: 1px 4px;
+      border-radius: 3px;
+      color: #0f172a;
+      border: 1px solid #e2e8f0;
+    }
+    pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7.8pt;
+      line-height: 1.45;
+      margin: 10px 0 14px 0;
+      overflow-x: hidden;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* Visual Architecture Box */
+    .arch-diagram {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px;
+      margin: 14px 0;
+    }
+    .arch-layer {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    .arch-layer-title {
+      font-size: 8.5pt;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .arch-layer-desc {
+      font-size: 8pt;
+      color: #64748b;
+    }
+    .arch-connector {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 8pt;
+      margin: -4px 0 4px 0;
+      font-weight: bold;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      font-size: 7pt;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-blue { background: #dbeafe; color: #1d4ed8; }
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-amber { background: #fef3c7; color: #b45309; }
+    .badge-purple { background: #f3e8ff; color: #7e22ce; }
+  </style>
+</head>
+<body>
+
+  <!-- COVER PAGE -->
+  <div class="cover">
+    <div class="cover-top">
+      <div class="brand-tag">OpsFlow Enterprise Edition &bull; v2.4.0-LTS</div>
+      <h1 class="cover-title">NexusCloud OpsFlow</h1>
+      <p class="cover-subtitle">
+        Comprehensive Technical Whitepaper, Architectural Specifications, Core Capabilities &amp; Developer Reference Guide.
+      </p>
+
+      <div class="callout callout-success">
+        <strong>100% Free &amp; Local Execution Guarantee:</strong> OpsFlow operates entirely on local compute infrastructure with zero third-party cloud bills, zero mandatory SaaS subscriptions, and zero external telemetry requirements.
+      </div>
+
+      <div class="cover-meta-grid">
+        <div class="meta-item">
+          <span class="meta-label">System Classification</span>
+          <span class="meta-val">Enterprise Task &amp; SRE Incident Orchestration</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Release Version</span>
+          <span class="meta-val">v2.4.0-LTS (Production Grade)</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Frontend Architecture</span>
+          <span class="meta-val">Next.js 14 App Router, React 18, Tailwind CSS</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Backend Architecture</span>
+          <span class="meta-val">Node.js, Express, Prisma ORM, WebSocket Server</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Security &amp; Compliance</span>
+          <span class="meta-val">Zero-Trust TOTP 2FA, Session Governance &amp; Audit Logs</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Intelligence &amp; Automation</span>
+          <span class="meta-val">Local SRE AI Copilot &amp; Event-Driven Workflow Engine</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cover-footer">
+      <span>&copy; NexusCloud Engineering Group</span>
+      <span>Confidential &amp; Technical Reference Manual</span>
+      <span>Local Port: 3000 (UI) | 5001 (API)</span>
+    </div>
+  </div>
+
+  <!-- PAGE BREAK: EXECUTIVE SUMMARY & WHAT THE PROJECT DOES -->
+  <div class="page-break"></div>
+
+  <h1>1. Executive Summary &amp; Problem Statement</h1>
+
+  <h2>1.1 What is OpsFlow?</h2>
+  <p>
+    <strong>OpsFlow</strong> is a high-performance, enterprise-grade engineering management and Site Reliability Engineering (SRE) orchestration platform designed to unify project delivery, real-time incident war rooms, automated workflows, and compliance auditing in a unified, local-first ecosystem.
+  </p>
+  <p>
+    Modern technology organizations frequently struggle with fragmented tooling—managing tasks in Jira or Linear, tracking production outages in PagerDuty or Slack channels, running custom automation scripts on cron servers, and paying exorbitant recurring per-seat SaaS subscription fees. OpsFlow solves this by synthesizing full-lifecycle task management, real-time SRE incident triage, zero-trust security, workflow automation, and localized AI intelligence into a single coherent system.
+  </p>
+
+  <h2>1.2 Core Business &amp; Engineering Value</h2>
+  <ul>
+    <li><strong>Zero-Cost &amp; Local Sovereignty:</strong> Built strictly with open-source runtimes and local storage engines (SQLite / PostgreSQL), eliminating recurring cloud expenditures and preserving absolute data privacy.</li>
+    <li><strong>Sub-Millisecond Real-Time Collaboration:</strong> Full duplex WebSocket synchronisation guarantees that updates to tasks, active incidents, and war room triage sessions propagate instantly across all active engineering team members.</li>
+    <li><strong>SRE War Room with Live Triage:</strong> A dedicated incident command centre featuring automated severity scoring (SEV-1 Critical through SEV-4 Minor), real-time collaborative chat, event timelines, and post-mortem generation.</li>
+    <li><strong>Enterprise Zero-Trust Security:</strong> Granular Role-Based Access Control (RBAC), multi-factor Time-Based One-Time Password (TOTP) authentication, active session governance with remote revocation, and immutable audit logs.</li>
+    <li><strong>Local AI SRE Copilot:</strong> An integrated, offline-capable assistant capable of automated root-cause analysis, post-mortem generation, and natural language SQL query translation.</li>
+  </ul>
+
+  <div class="callout callout-info avoid-break">
+    <strong>Target Audience:</strong> DevOps Engineers, Site Reliability Engineers (SREs), Engineering Directors, System Administrators, and Product Teams requiring enterprise tooling with full privacy and zero ongoing licensing costs.
+  </div>
+
+  <h1>2. Complete Technology Stack</h1>
+  <p>OpsFlow is built on a modern, decoupled architecture utilizing proven, enterprise-ready open-source technologies:</p>
+
+  <table class="avoid-break">
+    <thead>
+      <tr>
+        <th style="width: 22%;">Layer</th>
+        <th style="width: 28%;">Technology</th>
+        <th style="width: 50%;">Role &amp; Architectural Rationale</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Frontend Framework</strong></td>
+        <td><code>Next.js 14 / React 18</code></td>
+        <td>Server-side rendering, optimized client routing, strict TypeScript type-safety, and modular component hierarchy.</td>
+      </tr>
+      <tr>
+        <td><strong>Styling &amp; UX</strong></td>
+        <td><code>Tailwind CSS + Lucide Icons</code></td>
+        <td>Utility-first responsive design, modern dark/light themes, high contrast accessibility, and sub-pixel UI rendering.</td>
+      </tr>
+      <tr>
+        <td><strong>Real-Time Client</strong></td>
+        <td><code>Socket.IO Client</code></td>
+        <td>Bi-directional event subscriptions for task boards, war room live chat, system notifications, and online presence tracking.</td>
+      </tr>
+      <tr>
+        <td><strong>Backend Runtime</strong></td>
+        <td><code>Node.js 20+ &amp; Express.js</code></td>
+        <td>High-throughput asynchronous REST API gateway, structured routing, centralized error handlers, and rate-limiting.</td>
+      </tr>
+      <tr>
+        <td><strong>Database &amp; ORM</strong></td>
+        <td><code>Prisma ORM &amp; SQLite / Postgres</code></td>
+        <td>Strictly typed data schemas, automated migrations, fast relations, and robust ACID transaction guarantees.</td>
+      </tr>
+      <tr>
+        <td><strong>Security &amp; Auth</strong></td>
+        <td><code>JWT, Bcrypt &amp; Speakeasy TOTP</code></td>
+        <td>Stateless token authentication, argon/bcrypt password hashing, RFC 6238 two-factor authentication, and RBAC middleware.</td>
+      </tr>
+      <tr>
+        <td><strong>Automation Engine</strong></td>
+        <td><code>Event-Driven Pipeline</code></td>
+        <td>Rule-based execution engine responding to domain events (task created, status updated, incident opened) with multi-action triggers.</td>
+      </tr>
+      <tr>
+        <td><strong>Intelligence Engine</strong></td>
+        <td><code>Local SRE Copilot</code></td>
+        <td>Heuristic and template-driven local AI inference providing incident root cause analysis, automated triage, and smart actions.</td>
+      </tr>
+      <tr>
+        <td><strong>Documentation</strong></td>
+        <td><code>Swagger / OpenAPI 3.0</code></td>
+        <td>Self-documenting interactive API console hosted directly at <code>/api-docs</code> for developer onboarding.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- PAGE BREAK: HOW IT WORKS & ARCHITECTURE -->
+  <div class="page-break"></div>
+
+  <h1>3. System Architecture &amp; How It Works</h1>
+
+  <h2>3.1 High-Level Architecture Diagram</h2>
+  <div class="arch-diagram avoid-break">
+    <div class="arch-layer">
+      <div class="arch-layer-title">
+        <span>1. PRESENTATION LAYER (Web Client &amp; Hotkeys)</span>
+        <span class="badge badge-blue">Port 3000</span>
+      </div>
+      <div class="arch-layer-desc">Next.js UI &bull; Kanban Board &bull; SRE War Room Modal &bull; Automation Builder &bull; Linear Vim-Hotkeys (GD, GT, GI, C)</div>
+    </div>
+    <div class="arch-connector">&darr; HTTP REST / JSON &amp; WebSocket (ws://) &uarr;</div>
+    <div class="arch-layer">
+      <div class="arch-layer-title">
+        <span>2. API GATEWAY &amp; SECURITY MIDDLEWARE</span>
+        <span class="badge badge-purple">Port 5001</span>
+      </div>
+      <div class="arch-layer-desc">Helmet &bull; Global Rate Limiter &bull; JWT Authenticator &bull; Organization Tenant Filter &bull; Zero-Trust RBAC</div>
+    </div>
+    <div class="arch-connector">&darr; Internal Domain Dispatch &darr;</div>
+    <div class="arch-layer">
+      <div class="arch-layer-title">
+        <span>3. DOMAIN LOGIC, AUTOMATION &amp; COPILOT ENGINES</span>
+        <span class="badge badge-amber">Core Microservices</span>
+      </div>
+      <div class="arch-layer-desc">Task &amp; Incident Services &bull; Workflow Automation Evaluator &bull; Local SRE AI Copilot &bull; Audit Trail Logger</div>
+    </div>
+    <div class="arch-connector">&darr; Typed Data Access Layer &darr;</div>
+    <div class="arch-layer">
+      <div class="arch-layer-title">
+        <span>4. PERSISTENCE &amp; EVENT BUS</span>
+        <span class="badge badge-green">Storage &amp; Sockets</span>
+      </div>
+      <div class="arch-layer-desc">Prisma ORM &bull; SQLite Database (dev.db) / PostgreSQL &bull; Socket.IO Server &bull; Local Storage Volume</div>
+    </div>
+  </div>
+
+  <h2>3.2 Core Data Flow &amp; Lifecycle</h2>
+  <ol>
+    <li><strong>Client Interaction:</strong> When an engineer takes an action (e.g. creating a task, updating an incident severity, or running an automation), the Next.js client sends an authenticated HTTP request with a Bearer JWT.</li>
+    <li><strong>Authentication &amp; Tenant Isolation:</strong> The Express gateway verifies the token signature, decodes user permissions, and ensures all database queries are strictly scoped to the user's <code>organizationId</code>.</li>
+    <li><strong>Database Mutation &amp; Audit Trail:</strong> Prisma executes an ACID transaction to persist the mutation and simultaneously writes an immutable record to the <code>AuditLog</code> table capturing actor ID, action type, IP address, and metadata.</li>
+    <li><strong>Event-Driven Automation Trigger:</strong> The mutation dispatches an internal domain event (e.g. <code>TASK_STATUS_CHANGED</code>). The Automation Engine matches active workflow rules, checks conditions (e.g., <em>Priority == URGENT</em>), and executes configured actions (auto-assign, escalation notification, webhooks).</li>
+    <li><strong>WebSocket Broadcast:</strong> The Socket.IO server broadcasts a targeted event payload to all room subscribers belonging to that organization, automatically refreshing task boards, notification badges, and war room streams in real time.</li>
+  </ol>
+
+  <h2>3.3 Authentication &amp; Zero-Trust Security Model</h2>
+  <p>
+    OpsFlow enforces enterprise security standards through a multi-tiered security model:
+  </p>
+  <ul>
+    <li><strong>Stateless JWT Tokens:</strong> Signed with HMAC-SHA256 containing user ID, role, and organization context.</li>
+    <li><strong>RFC 6238 TOTP Two-Factor Authentication:</strong> High-security accounts can bind standard authenticator apps (Google Authenticator, Authy, 1Password) using QR code onboarding and encrypted secret keys.</li>
+    <li><strong>Active Session Governance:</strong> Every login logs the client user-agent, IP address, and last active timestamp. Users and administrators can terminate suspicious active sessions instantly with one click.</li>
+  </ul>
+
+  <!-- PAGE BREAK: DEEP DIVE INTO PLATFORM FEATURES -->
+  <div class="page-break"></div>
+
+  <h1>4. Comprehensive Platform Features</h1>
+
+  <h2>4.1 Enterprise Task &amp; Project Orchestration</h2>
+  <p>
+    OpsFlow delivers a responsive, keyboard-driven project tracking system engineered for high-velocity teams:
+  </p>
+  <ul>
+    <li><strong>Multi-View Layouts:</strong> Seamlessly toggle between visual Kanban Columns (Backlog, Todo, In Progress, Review, Done) and dense, sorting-enabled Data Grids.</li>
+    <li><strong>Power-User Bulk Operations:</strong> Select multiple tasks via multi-select checkboxes or click-drag to batch-update status, reassign ownership, change priorities, or export selected items in bulk.</li>
+    <li><strong>Rich Metadata:</strong> Task items support priority levels (Low, Medium, High, Urgent), estimation tags, due dates, department allocations, assignee relationships, and subtask dependencies.</li>
+  </ul>
+
+  <h2>4.2 SRE Incident War Room &amp; Live Outage Triage</h2>
+  <p>
+    When production disruptions occur, OpsFlow transforms into a high-stakes Incident Command Center:
+  </p>
+  <ul>
+    <li><strong>Severity Classification:</strong> Standardized categorization from <code>SEV-1 (Critical Outage)</code> down to <code>SEV-4 (Minor Glitch)</code> with real-time SLA timers.</li>
+    <li><strong>Collaborative War Room Modal:</strong> Dedicated incident workspace equipped with live chat, chronological timeline markers, real-time participant badges, and status progression (Investigating &rarr; Identified &rarr; Monitoring &rarr; Resolved).</li>
+    <li><strong>Post-Mortem &amp; Root Cause Analysis:</strong> One-click root cause capture, automated resolution metrics (MTTD / MTTR), and incident summaries.</li>
+  </ul>
+
+  <h2>4.3 Event-Driven Workflow Automation Engine</h2>
+  <p>
+    OpsFlow includes a built-in, no-code workflow automation engine allowing engineering managers to automate repetitive processes without writing scripts:
+  </p>
+  <table class="avoid-break">
+    <thead>
+      <tr>
+        <th>Trigger Event</th>
+        <th>Condition Filter</th>
+        <th>Automated Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>task_created</code></td>
+        <td><code>priority == "URGENT"</code></td>
+        <td>Auto-notify Lead On-Call Engineer &amp; assign to SRE Team.</td>
+      </tr>
+      <tr>
+        <td><code>incident_opened</code></td>
+        <td><code>severity == "SEV_1"</code></td>
+        <td>Broadcast War Room notification &amp; create emergency tracking task.</td>
+      </tr>
+      <tr>
+        <td><code>status_changed</code></td>
+        <td><code>status == "DONE"</code></td>
+        <td>Log compliance completion event in Audit Trail &amp; notify reviewer.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>4.4 Local SRE AI Copilot &amp; Assistant</h2>
+  <p>
+    Unlike SaaS tools requiring third-party OpenAI or Anthropic API keys with per-token billing, OpsFlow embeds a <strong>100% free, localized AI Copilot</strong>:
+  </p>
+  <ul>
+    <li><strong>Instant Root-Cause Analysis:</strong> Examines active incidents and suggests systematic diagnostic playbooks (database locks, memory saturation, network timeouts).</li>
+    <li><strong>Natural Language SQL &amp; Query Translation:</strong> Translates requests like <em>"Show overdue tasks in DevOps assigned to Sarah"</em> into structured filters.</li>
+    <li><strong>SRE Post-Mortem Drafter:</strong> Compiles timeline events and participant notes into structured markdown post-mortem reports.</li>
+  </ul>
+
+  <h2>4.5 OLAP Star-Schema Dimensional Exporter</h2>
+  <p>
+    Data analytics and compliance reporting are native features in OpsFlow. The analytics dashboard provides:
+  </p>
+  <ul>
+    <li><strong>Dimensional JSON &amp; CSV Exporters:</strong> Exports task and incident datasets in dimensional star-schema formats (Fact tables and Dimension tables) compatible with PowerBI, Tableau, and Snowflake.</li>
+    <li><strong>Engineering Velocity Metrics:</strong> Live tracking of Mean Time to Detect (MTTD), Mean Time to Resolve (MTTR), Task Completion Velocities, and Department Load Distributions.</li>
+  </ul>
+
+  <h2>4.6 Linear &amp; Vim-Style Keyboard Navigation</h2>
+  <p>
+    Optimized for developer ergonomics, OpsFlow supports instant global shortcut bindings:
+  </p>
+  <ul>
+    <li><kbd>C</kbd> &mdash; Create new task modal</li>
+    <li><kbd>A</kbd> &mdash; Toggle AI Copilot assistant drawer</li>
+    <li><kbd>?</kbd> &mdash; View keyboard shortcut cheat sheet</li>
+    <li><kbd>G</kbd> then <kbd>D</kbd> &mdash; Navigate to Dashboard</li>
+    <li><kbd>G</kbd> then <kbd>T</kbd> &mdash; Navigate to Tasks</li>
+    <li><kbd>G</kbd> then <kbd>I</kbd> &mdash; Navigate to Incidents</li>
+    <li><kbd>G</kbd> then <kbd>W</kbd> &mdash; Navigate to Workflow Automations</li>
+    <li><kbd>G</kbd> then <kbd>A</kbd> &mdash; Navigate to Analytics</li>
+    <li><kbd>G</kbd> then <kbd>S</kbd> &mdash; Navigate to Settings / Profile</li>
+  </ul>
+
+  <!-- PAGE BREAK: INSTALLATION & API REFERENCE -->
+  <div class="page-break"></div>
+
+  <h1>5. Local Setup &amp; Deployment Guide</h1>
+
+  <h2>5.1 Prerequisites</h2>
+  <ul>
+    <li><strong>Node.js:</strong> v18.0.0 or later (v20+ LTS recommended)</li>
+    <li><strong>Package Manager:</strong> <code>npm</code> or <code>pnpm</code></li>
+    <li><strong>Database:</strong> Built-in SQLite (Zero configuration needed) or optional PostgreSQL</li>
+  </ul>
+
+  <h2>5.2 Quickstart Commands</h2>
+  <pre># 1. Clone the repository and navigate to workspace
+cd opsflow
+
+# 2. Install backend dependencies and initialize database
+cd backend
+npm install
+npx prisma db push
+npx tsx src/database/seeds/seed.ts   # Seeds default enterprise demo data
+
+# 3. Start the Backend API Server (Port 5001)
+npm run dev
+
+# 4. In a separate terminal, install and start the Frontend (Port 3000)
+cd ../frontend
+npm install
+npm run dev</pre>
+
+  <h2>5.3 Default Demo Credentials</h2>
+  <table class="avoid-break">
+    <thead>
+      <tr>
+        <th>Role</th>
+        <th>Email Address</th>
+        <th>Default Password</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Organization Owner</strong></td>
+        <td><code>admin@nexuscloud.io</code></td>
+        <td><code>Password123!</code></td>
+      </tr>
+      <tr>
+        <td><strong>Lead SRE / Admin</strong></td>
+        <td><code>sarah.connor@nexuscloud.io</code></td>
+        <td><code>Password123!</code></td>
+      </tr>
+      <tr>
+        <td><strong>Senior Engineer</strong></td>
+        <td><code>alex.chen@nexuscloud.io</code></td>
+        <td><code>Password123!</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h1>6. API Reference &amp; Service Catalog</h1>
+  <p>
+    The OpsFlow REST API is fully compliant with the OpenAPI 3.0 specification and accessible via the interactive Swagger UI at <code>http://localhost:5001/api-docs</code>.
+  </p>
+
+  <table class="avoid-break">
+    <thead>
+      <tr>
+        <th style="width: 15%;">Method</th>
+        <th style="width: 35%;">Endpoint</th>
+        <th style="width: 50%;">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="badge badge-blue">GET</span></td>
+        <td><code>/api/v1/health</code></td>
+        <td>System telemetry, database latency probe, and memory usage statistics.</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-green">POST</span></td>
+        <td><code>/api/v1/auth/login</code></td>
+        <td>Authenticate user credentials and obtain session JWT token.</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-green">POST</span></td>
+        <td><code>/api/v1/auth/totp/verify</code></td>
+        <td>Validate 6-digit TOTP token during zero-trust two-factor authentication.</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-blue">GET</span></td>
+        <td><code>/api/v1/tasks</code></td>
+        <td>Query paginated tasks with department, priority, and status filters.</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-green">POST</span></td>
+        <td><code>/api/v1/tasks</code></td>
+        <td>Create a new engineering task and dispatch automation triggers.</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-blue">GET</span></td>
+        <td><code>/api/v1/incidents</code></td>
+        <td>Fetch active incidents, severity classifications, and SLA status.</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-green">POST</span></td>
+        <td><code>/api/v1/incidents/:id/war-room</code></td>
+        <td>Broadcast message or status marker to the active Incident War Room.</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-blue">GET</span></td>
+        <td><code>/api/v1/automations</code></td>
+        <td>List active event-driven automation rules and trigger histories.</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-green">POST</span></td>
+        <td><code>/api/v1/copilot/chat</code></td>
+        <td>Execute local SRE AI Copilot reasoning and query generation.</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-blue">GET</span></td>
+        <td><code>/api/v1/audit-logs</code></td>
+        <td>Fetch immutable, tenant-isolated security and compliance audit logs.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-info avoid-break" style="margin-top: 20px;">
+    <strong>Interactive Developer Portal:</strong> For complete request/response schemas, live parameter testing, and code generation snippets in cURL, Python, and JavaScript, visit the Developer Portal at <code>http://localhost:5001</code>.
+  </div>
+
+</body>
+</html>

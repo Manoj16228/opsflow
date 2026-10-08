@@ -1,0 +1,442 @@
+// OpsFlow Enterprise Prisma Schema
+// Target Database: PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+  ANALYST
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  ON_LEAVE
+  TERMINATED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum TaskStatus {
+  BACKLOG
+  ASSIGNED
+  IN_PROGRESS
+  IN_REVIEW
+  COMPLETED
+  CANCELLED
+}
+
+enum IncidentSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum IncidentStatus {
+  OPEN
+  ASSIGNED
+  INVESTIGATING
+  RESOLVED
+  CLOSED
+}
+
+enum NotificationType {
+  TASK_ASSIGNED
+  TASK_STATUS_CHANGED
+  TASK_DUE_SOON
+  TASK_OVERDUE
+  INCIDENT_ASSIGNED
+  INCIDENT_STATUS_CHANGED
+  INCIDENT_SLA_BREACH
+  SYSTEM_ALERT
+}
+
+enum AttachmentEntityType {
+  TASK
+  INCIDENT
+}
+
+// -----------------------------------------------------------------------------
+// 1. Organization & Multi-Tenancy
+// -----------------------------------------------------------------------------
+model Organization {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  domain      String?
+  industry    String?
+  logoUrl     String?
+  plan        String   @default("ENTERPRISE")
+  isActive    Boolean  @default(true)
+  settings    Json?    @default("{}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users         User[]
+  departments   Department[]
+  employees     Employee[]
+  tasks         Task[]
+  incidents     Incident[]
+  notifications Notification[]
+  attachments   Attachment[]
+  auditLogs     AuditLog[]
+
+  @@index([slug])
+  @@map("organizations")
+}
+
+// -----------------------------------------------------------------------------
+// 2. Authentication & User Accounts
+// -----------------------------------------------------------------------------
+model User {
+  id             String     @id @default(uuid())
+  organizationId String
+  email          String     @unique
+  passwordHash   String
+  firstName      String
+  lastName       String
+  role           UserRole   @default(EMPLOYEE)
+  status         UserStatus @default(ACTIVE)
+  avatarUrl      String?
+  lastLoginAt    DateTime?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  employeeProfile  Employee?
+  refreshTokens    RefreshToken[]
+  createdTasks     Task[]            @relation("TaskCreatedBy")
+  taskComments     TaskComment[]
+  taskHistories    TaskHistory[]
+  reportedIncidents Incident[]       @relation("IncidentReportedBy")
+  incidentComments IncidentComment[]
+  incidentHistories IncidentHistory[]
+  notifications    Notification[]
+  uploadedFiles    Attachment[]
+  auditLogs        AuditLog[]
+
+  @@index([organizationId])
+  @@index([email])
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  tokenHash String   @unique
+  isRevoked Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@map("refresh_tokens")
+}
+
+// -----------------------------------------------------------------------------
+// 3. Departments & Structure
+// -----------------------------------------------------------------------------
+model Department {
+  id             String   @id @default(uuid())
+  organizationId String
+  name           String
+  code           String
+  description    String?
+  managerId      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  employees    Employee[]
+  tasks        Task[]
+  incidents    Incident[]
+
+  @@unique([organizationId, code])
+  @@index([organizationId])
+  @@map("departments")
+}
+
+// -----------------------------------------------------------------------------
+// 4. Employee Management
+// -----------------------------------------------------------------------------
+model Employee {
+  id             String         @id @default(uuid())
+  organizationId String
+  userId         String?        @unique
+  departmentId   String?
+  managerId      String?
+  employeeCode   String
+  firstName      String
+  lastName       String
+  email          String
+  phone          String?
+  designation    String
+  skills         String[]       @default([])
+  status         EmployeeStatus @default(ACTIVE)
+  avatarUrl      String?
+  joiningDate    DateTime       @default(now())
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user               User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  department         Department?  @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  manager            Employee?    @relation("OrgChart", fields: [managerId], references: [id], onDelete: SetNull)
+  directReports      Employee[]   @relation("OrgChart")
+  assignedTasks      Task[]       @relation("TaskAssignedEmployee")
+  assignedIncidents  Incident[]   @relation("IncidentAssignedEmployee")
+
+  @@unique([organizationId, employeeCode])
+  @@index([organizationId])
+  @@index([departmentId])
+  @@index([managerId])
+  @@index([email])
+  @@map("employees")
+}
+
+// -----------------------------------------------------------------------------
+// 5. Tasks & SLA Workflow
+// -----------------------------------------------------------------------------
+model Task {
+  id             String     @id @default(uuid())
+  taskCode       String     // e.g. TSK-1001
+  organizationId String
+  departmentId   String?
+  assignedToId   String?    // links to Employee.id
+  createdById    String     // links to User.id
+  title          String
+  description    String
+  priority       Priority   @default(MEDIUM)
+  status         TaskStatus @default(ASSIGNED)
+  estimatedHours Float?     @default(0)
+  actualHours    Float?     @default(0)
+  startDate      DateTime?
+  dueDate        DateTime?
+  completedDate  DateTime?
+  slaHours       Float?     @default(24)
+  slaDeadline    DateTime?
+  isSlaBreached  Boolean    @default(false)
+  tags           String[]   @default([])
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  department   Department?   @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  assignedTo   Employee?     @relation("TaskAssignedEmployee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  createdBy    User          @relation("TaskCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
+  comments     TaskComment[]
+  histories    TaskHistory[]
+
+  @@unique([organizationId, taskCode])
+  @@index([organizationId])
+  @@index([departmentId])
+  @@index([assignedToId])
+  @@index([status])
+  @@index([priority])
+  @@index([dueDate])
+  @@map("tasks")
+}
+
+model TaskComment {
+  id        String   @id @default(uuid())
+  taskId    String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([userId])
+  @@map("task_comments")
+}
+
+model TaskHistory {
+  id        String   @id @default(uuid())
+  taskId    String
+  userId    String
+  action    String   // e.g., STATUS_UPDATED, REASSIGNED, PRIORITY_CHANGED
+  field     String?
+  oldValue  String?
+  newValue  String?
+  createdAt DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@map("task_histories")
+}
+
+// -----------------------------------------------------------------------------
+// 6. Incident Management & SLA Tracking
+// -----------------------------------------------------------------------------
+model Incident {
+  id                 String           @id @default(uuid())
+  incidentCode       String           // e.g. INC-2001
+  organizationId     String
+  departmentId       String?
+  reportedById       String           // links to User.id
+  assignedEmployeeId String?          // links to Employee.id
+  title              String
+  description        String
+  severity           IncidentSeverity @default(MEDIUM)
+  status             IncidentStatus   @default(OPEN)
+  slaHours           Float            @default(4)
+  slaDeadline        DateTime?
+  isSlaBreached      Boolean          @default(false)
+  resolvedAt         DateTime?
+  closedAt           DateTime?
+  resolutionNotes    String?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  department       Department?       @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  reportedBy       User              @relation("IncidentReportedBy", fields: [reportedById], references: [id], onDelete: Cascade)
+  assignedEmployee Employee?         @relation("IncidentAssignedEmployee", fields: [assignedEmployeeId], references: [id], onDelete: SetNull)
+  comments         IncidentComment[]
+  histories        IncidentHistory[]
+
+  @@unique([organizationId, incidentCode])
+  @@index([organizationId])
+  @@index([departmentId])
+  @@index([assignedEmployeeId])
+  @@index([status])
+  @@index([severity])
+  @@map("incidents")
+}
+
+model IncidentComment {
+  id         String   @id @default(uuid())
+  incidentId String
+  userId     String
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  incident Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([incidentId])
+  @@index([userId])
+  @@map("incident_comments")
+}
+
+model IncidentHistory {
+  id         String   @id @default(uuid())
+  incidentId String
+  userId     String
+  action     String   // e.g. SEVERITY_CHANGED, STATUS_CHANGED, ASSIGNED
+  field      String?
+  oldValue   String?
+  newValue   String?
+  createdAt  DateTime @default(now())
+
+  incident Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([incidentId])
+  @@map("incident_histories")
+}
+
+// -----------------------------------------------------------------------------
+// 7. Notifications & Alerts
+// -----------------------------------------------------------------------------
+model Notification {
+  id             String           @id @default(uuid())
+  organizationId String
+  userId         String
+  title          String
+  message        String
+  type           NotificationType @default(SYSTEM_ALERT)
+  linkUrl        String?
+  isRead         Boolean          @default(false)
+  readAt         DateTime?
+  metadata       Json?            @default("{}")
+  createdAt      DateTime         @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
+// -----------------------------------------------------------------------------
+// 8. Attachments & File Storage
+// -----------------------------------------------------------------------------
+model Attachment {
+  id             String               @id @default(uuid())
+  organizationId String
+  uploadedById   String
+  entityType     AttachmentEntityType
+  entityId       String               // Task ID or Incident ID
+  originalName   String
+  fileName       String
+  mimeType       String
+  fileSize       Int
+  fileUrl        String
+  storageDriver  String               @default("local") // "local" or "azure"
+  createdAt      DateTime             @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  uploadedBy   User         @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([entityType, entityId])
+  @@map("attachments")
+}
+
+// -----------------------------------------------------------------------------
+// 9. Compliance & Audit Logs
+// -----------------------------------------------------------------------------
+model AuditLog {
+  id             String   @id @default(uuid())
+  organizationId String
+  userId         String?
+  userEmail      String?
+  action         String   // USER_LOGIN, TASK_CREATED, STATUS_CHANGED, etc.
+  entity         String   // Task, Incident, Employee, User, Organization
+  entityId       String
+  oldValues      Json?
+  newValues      Json?
+  ipAddress      String?
+  userAgent      String?
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId])
+  @@index([entity, entityId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
