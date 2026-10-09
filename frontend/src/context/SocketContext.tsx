@@ -76,9 +76,12 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    const customApi = localStorage.getItem('opsflow_api_url');
     const socketUrl =
       import.meta.env.VITE_SOCKET_URL ||
-      (import.meta.env.VITE_API_URL
+      (customApi
+        ? customApi.replace(/\/api\/v1\/?$/, '')
+        : import.meta.env.VITE_API_URL
         ? import.meta.env.VITE_API_URL.replace(/\/api\/v1\/?$/, '')
         : window.location.origin);
 

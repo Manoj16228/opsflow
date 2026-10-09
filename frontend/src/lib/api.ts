@@ -1,14 +1,40 @@
 import axios from 'axios';
 
+export function getApiBaseUrl(): string {
+  const custom = localStorage.getItem('opsflow_api_url');
+  if (custom && custom.trim()) {
+    const trimmed = custom.trim().replace(/\/+$/, '');
+    return trimmed.endsWith('/api/v1') ? trimmed : `${trimmed}/api/v1`;
+  }
+  if (import.meta.env.VITE_API_URL) {
+    const envUrl = import.meta.env.VITE_API_URL.trim().replace(/\/+$/, '');
+    return envUrl.endsWith('/api/v1') ? envUrl : `${envUrl}/api/v1`;
+  }
+  return '/api/v1';
+}
+
+export function setApiBaseUrl(url: string) {
+  if (!url || !url.trim()) {
+    localStorage.removeItem('opsflow_api_url');
+  } else {
+    let clean = url.trim().replace(/\/+$/, '');
+    if (!clean.endsWith('/api/v1') && !clean.includes('/api/v1')) {
+      clean = `${clean}/api/v1`;
+    }
+    localStorage.setItem('opsflow_api_url', clean);
+  }
+}
+
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api/v1',
+  baseURL: getApiBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request Interceptor: Attach Access Token
+// Request Interceptor: Attach Access Token and dynamic baseURL
 api.interceptors.request.use((config) => {
+  config.baseURL = getApiBaseUrl();
   const token = localStorage.getItem('opsflow_access_token');
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -28,7 +54,7 @@ api.interceptors.response.use(
 
       if (refreshToken) {
         try {
-          const res = await axios.post('/api/v1/auth/refresh', { refreshToken });
+          const res = await axios.post(`${getApiBaseUrl()}/auth/refresh`, { refreshToken });
           const { accessToken, refreshToken: newRefreshToken } = res.data.data;
 
           localStorage.setItem('opsflow_access_token', accessToken);
@@ -53,3 +79,4 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
